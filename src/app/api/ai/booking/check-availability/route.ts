@@ -14,14 +14,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Date is required' }, { status: 400 })
     }
 
-    const targetDate = new Date(date)
-    const startOfDay = new Date(targetDate)
-    startOfDay.setHours(0, 0, 0, 0)
-    const endOfDay = new Date(targetDate)
-    endOfDay.setHours(23, 59, 59, 999)
+    // Parse date parts explicitly to avoid timezone issues
+    const [year, month, day] = date.split('-').map(Number)
+    if (!year || !month || !day) {
+      return NextResponse.json({ error: 'Invalid date format. Use YYYY-MM-DD.' }, { status: 400 })
+    }
 
-    // Check what day of the week it is
-    const dayOfWeek = targetDate.getDay() // 0=Sun, 6=Sat
+    const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0))
+    const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999))
+
+    // Check what day of the week it is (UTC)
+    const dayOfWeek = startOfDay.getUTCDay() // 0=Sun, 6=Sat
 
     // Sunday — closed
     if (dayOfWeek === 0) {
@@ -62,8 +65,8 @@ export async function POST(req: NextRequest) {
         ? `${availableSlots.length} time slots available on this date.`
         : 'No available slots on this date. Please try another date.',
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Availability check error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ error: 'Internal server error', details: error?.message || 'Unknown' }, { status: 500 })
   }
 }

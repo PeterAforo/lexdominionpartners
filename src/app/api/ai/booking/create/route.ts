@@ -10,12 +10,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Double-check availability before creating
-    const targetDate = new Date(date)
-    const startOfDay = new Date(targetDate)
-    startOfDay.setHours(0, 0, 0, 0)
-    const endOfDay = new Date(targetDate)
-    endOfDay.setHours(23, 59, 59, 999)
+    // Double-check availability before creating (use UTC to avoid timezone issues)
+    const [year, month, day] = date.split('-').map(Number)
+    const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0))
+    const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999))
 
     const existingBooking = await prisma.booking.findFirst({
       where: {
@@ -38,7 +36,7 @@ export async function POST(req: NextRequest) {
         lastName,
         email,
         phone,
-        date: new Date(date),
+        date: startOfDay,
         time,
         message: message ? `[Booked via Lex AI Chatbot] ${service ? `Service: ${service}. ` : ''}${message}` : `[Booked via Lex AI Chatbot]${service ? ` Service: ${service}` : ''}`,
       },
