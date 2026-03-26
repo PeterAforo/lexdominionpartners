@@ -1,6 +1,6 @@
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import AIAssistant from '@/components/ai/AIAssistant'
+import Chatbot from '@/components/chatbot/Chatbot'
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,7 +8,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <Navbar />
       <main className="min-h-screen">{children}</main>
       <Footer />
-      <AIAssistant />
+      <Chatbot />
     </>
   )
 }

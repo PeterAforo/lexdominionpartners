@@ -1,99 +1,265 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CHATBOT_CONFIG } from '@/lib/chatbot-config'
+import { KNOWLEDGE_BASE, searchKnowledge } from '@/lib/chatbot-knowledge'
 
-const FIRM_KNOWLEDGE = `
-You are Lex, the AI legal assistant for Lex Dominion Partners, a premier law firm. Tagline: "Law & Leadership". Always introduce yourself as "Lex" when greeting users.
+// Rate limiting: simple in-memory store
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
+const RATE_LIMIT = 30 // requests per window
+const RATE_WINDOW = 60 * 1000 // 1 minute
 
-PRACTICE AREAS: Corporate Law, Litigation, Real Estate, Family Law, Criminal Defense, Intellectual Property, Immigration, Tax Law.
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const entry = rateLimitMap.get(ip)
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW })
+    return false
+  }
+  entry.count++
+  return entry.count > RATE_LIMIT
+}
+
+// Build the system prompt dynamically from config and knowledge base
+function buildSystemPrompt(): string {
+  const { name, personality, contact, capabilities } = CHATBOT_CONFIG
+
+  const knowledgeSummary = KNOWLEDGE_BASE.map(
+    (k) => `Q: ${k.question}\nA: ${k.answer}`
+  ).join('\n\n')
+
+  return `You are ${name}, the AI legal assistant for Lex Dominion Partners, a premier law firm. Tagline: "Law & Leadership".
+
+PERSONALITY: ${personality.tone}. ${personality.style}.
+
+RULES:
+${personality.rules.map((r) => `- ${r}`).join('\n')}
 
 CONTACT INFO:
-- Phone: +1 (234) 567-890
-- Email: info@lexdominion.com
-- Address: 123 Legal Avenue, Suite 500, New York, NY 10001
-- Hours: Mon-Fri 9AM-6PM, Sat 10AM-2PM
+- Phone: ${contact.phone}
+- Email: ${contact.email}
+- Address: ${contact.address}
+- Hours: ${contact.hours.weekday}, ${contact.hours.saturday}, ${contact.hours.sunday}
 
-KEY TEAM MEMBERS:
-- Alexander Mensah - Managing Partner, Corporate Law
-- Amara Adeyemi - Senior Partner, Litigation
-- Kwame Okafor - Partner, Real Estate
-- Nkechi Nkosi - Partner, Family Law
-- Emeka Afolabi - Partner, Criminal Defense
-- Sophia Dlamini - Partner, Intellectual Property
-- Kofi Asante - Partner, Immigration
-- Abena Osei - Partner, Tax Law
+ENABLED CAPABILITIES:
+${Object.entries(capabilities)
+  .filter(([, v]) => v)
+  .map(([k]) => `- ${k}`)
+  .join('\n')}
 
-BOOKING: Direct users to /booking page or offer to help them start the booking process. Consultations are free for the first meeting.
+RESPONSE FORMAT:
+You MUST respond with valid JSON in this exact format — no markdown code fences, just raw JSON:
+{
+  "message": "Your text response to the user. Use markdown for formatting (bold, lists, links).",
+  "action": "none",
+  "quick_replies": ["Suggestion 1", "Suggestion 2"]
+}
 
-GUIDELINES:
-- Be professional, warm, and helpful
-- Never provide specific legal advice - always recommend consulting with an attorney
-- Help with booking consultations, answering general questions about services, and providing contact information
-- If asked about fees, say "Our fee structure varies by case type. We offer a free initial consultation to discuss your needs and provide a transparent fee estimate."
-- Keep responses concise and helpful
-`
+ACTION VALUES (use exactly one):
+- "none" — normal conversational response
+- "book_appointment" — user wants to book a consultation. Include link to /booking in message.
+- "capture_lead" — user wants to leave a message or be contacted. Ask for name and email.
+- "redirect" — user should be directed to a specific page. Include the path in message.
+- "show_services" — user wants to see practice areas overview.
+- "escalate" — user is frustrated or needs human help.
 
-export async function POST(req: NextRequest) {
-  try {
-    const { messages } = await req.json()
+QUICK_REPLIES: Always suggest 2-4 short follow-up options (max 30 chars each) that are relevant to the conversation context.
 
-    if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here') {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            { role: 'system', content: FIRM_KNOWLEDGE },
-            ...messages.slice(-10),
-          ],
-          max_tokens: 500,
-          temperature: 0.7,
-        }),
-      })
+CONVERSATION FLOWS:
+1. BOOKING: When user wants to book → ask what practice area → suggest visiting /booking → confirm
+2. LEAD CAPTURE: When user wants to leave a message → ask for name → ask for email → ask for their message → confirm receipt
+3. ESCALATION: When user seems frustrated → acknowledge → offer to connect with human → provide contact info or trigger lead capture
+4. FAQ: Search knowledge base first, then provide relevant answer with source
 
-      const data = await response.json()
-      return NextResponse.json({
-        message: data.choices?.[0]?.message?.content || getFallbackResponse(messages[messages.length - 1]?.content),
-      })
+KNOWLEDGE BASE:
+${knowledgeSummary}
+
+IMPORTANT:
+- Always stay on-topic about legal services and Lex Dominion Partners
+- If you don't know something, offer to connect the user with an attorney
+- ALWAYS respond with valid JSON only — no extra text before or after
+- When mentioning pages, use markdown links like [booking page](/booking)
+- Keep responses concise (2-4 sentences for simple queries, more for detailed explanations)`
+}
+
+// Detect conversation intent for fallback routing
+function detectIntent(message: string): string {
+  const msg = message.toLowerCase()
+
+  // Frustration detection
+  const frustrationWords = ['frustrated', 'unhappy', 'broken', 'terrible', 'worst', 'angry', 'ridiculous', 'useless', 'waste']
+  if (frustrationWords.some((w) => msg.includes(w))) return 'escalate'
+
+  // Booking intent
+  if (msg.includes('book') || msg.includes('consultation') || msg.includes('appointment') || msg.includes('schedule') || msg.includes('meeting')) return 'booking'
+
+  // Lead capture intent
+  if (msg.includes('leave a message') || msg.includes('reach out') || msg.includes('talk to someone') || msg.includes('contact you') || msg.includes('call me back')) return 'lead_capture'
+
+  // Services intent
+  if (msg.includes('practice') || msg.includes('service') || msg.includes('area') || msg.includes('what do you do') || msg.includes('specialize')) return 'services'
+
+  // Contact intent
+  if (msg.includes('contact') || msg.includes('phone') || msg.includes('email') || msg.includes('address') || msg.includes('location') || msg.includes('where')) return 'contact'
+
+  // Team intent
+  if (msg.includes('team') || msg.includes('attorney') || msg.includes('lawyer') || msg.includes('who')) return 'team'
+
+  // Fee intent
+  if (msg.includes('fee') || msg.includes('cost') || msg.includes('price') || msg.includes('charge') || msg.includes('expensive') || msg.includes('payment') || msg.includes('afford')) return 'fees'
+
+  // Hours intent
+  if (msg.includes('hour') || msg.includes('open') || msg.includes('when') || msg.includes('available')) return 'hours'
+
+  // Blog intent
+  if (msg.includes('blog') || msg.includes('article') || msg.includes('read') || msg.includes('resource') || msg.includes('news')) return 'blog'
+
+  // Greeting intent
+  if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey') || msg.includes('good morning') || msg.includes('good afternoon') || msg.includes('good evening')) return 'greeting'
+
+  return 'general'
+}
+
+// Build fallback response with structured format
+function getFallbackResponse(userMessage: string): object {
+  const intent = detectIntent(userMessage)
+
+  // Try knowledge base search first
+  const knowledgeMatch = searchKnowledge(userMessage)
+
+  if (knowledgeMatch && intent !== 'greeting') {
+    const quickReplies = getQuickRepliesForCategory(knowledgeMatch.category)
+    return {
+      message: knowledgeMatch.answer,
+      action: intent === 'booking' ? 'book_appointment' : intent === 'escalate' ? 'escalate' : 'none',
+      quick_replies: quickReplies,
     }
+  }
 
-    return NextResponse.json({
-      message: getFallbackResponse(messages[messages.length - 1]?.content || ''),
-    })
-  } catch (error) {
-    console.error('AI Chat error:', error)
-    return NextResponse.json({
-      message: 'I apologize for the inconvenience. Please contact us directly at +1 (234) 567-890 or email info@lexdominion.com for immediate assistance.',
-    })
+  // Intent-based fallback
+  switch (intent) {
+    case 'greeting':
+      return {
+        message: "Hello! Welcome to Lex Dominion Partners. I'm Lex, your AI legal assistant. I can help you with:\n\n• Booking a free consultation\n• Information about our practice areas\n• Contact details and office hours\n• General questions about our services\n\nHow can I assist you today?",
+        action: 'none',
+        quick_replies: ['Book Consultation', 'Practice Areas', 'Contact Info', 'Meet the Team'],
+      }
+    case 'booking':
+      return {
+        message: "I'd be happy to help you book a consultation! You can schedule one directly on our [booking page](/booking), or call us at +1 (234) 567-890. Our initial consultations are **complimentary**.\n\nWhat practice area is your matter related to?",
+        action: 'book_appointment',
+        quick_replies: ['Corporate Law', 'Family Law', 'Criminal Defense', 'Immigration'],
+      }
+    case 'escalate':
+      return {
+        message: "I'm sorry you're having trouble. Let me connect you with our team directly. You can:\n\n• **Call:** +1 (234) 567-890\n• **Email:** info@lexdominion.com\n• **Contact form:** [/contact](/contact)\n\nOr I can take your details and have someone reach out to you. Would you like that?",
+        action: 'escalate',
+        quick_replies: ['Leave a message', 'Call the office', 'Book consultation'],
+      }
+    case 'lead_capture':
+      return {
+        message: "I'd be happy to have someone reach out to you! Could you please share your **name** and **email address**? Our team will get back to you within 24 hours.",
+        action: 'capture_lead',
+        quick_replies: ['Call instead', 'Book consultation'],
+      }
+    default:
+      return {
+        message: "Thank you for your question. While I can help with general information about our firm and services, for specific legal matters, I'd recommend scheduling a consultation with one of our attorneys.\n\nWould you like to:\n\n1. **Book a consultation** — Visit [/booking](/booking)\n2. **Learn about our services** — Visit [/services](/services)\n3. **Contact us directly** — Call +1 (234) 567-890",
+        action: 'none',
+        quick_replies: ['Book Consultation', 'Our Services', 'Contact Us'],
+      }
   }
 }
 
-function getFallbackResponse(userMessage: string): string {
-  const msg = userMessage.toLowerCase()
+function getQuickRepliesForCategory(category: string): string[] {
+  switch (category) {
+    case 'services':
+      return ['Book Consultation', 'What are your fees?', 'Meet the team']
+    case 'booking':
+      return ['Go to booking page', 'What to expect', 'Contact directly']
+    case 'fees':
+      return ['Book free consultation', 'Payment plans', 'Contact us']
+    case 'team':
+      return ['Book Consultation', 'Practice Areas', 'Contact Info']
+    case 'contact':
+      return ['Book Consultation', 'Office Hours', 'Practice Areas']
+    case 'blog':
+      return ['Book Consultation', 'Practice Areas', 'Contact Us']
+    default:
+      return ['Book Consultation', 'Our Services', 'Contact Us']
+  }
+}
 
-  if (msg.includes('book') || msg.includes('consultation') || msg.includes('appointment') || msg.includes('schedule')) {
-    return 'I\'d be happy to help you book a consultation! You can schedule one directly on our booking page at /booking, or call us at +1 (234) 567-890. Our initial consultations are complimentary. What practice area is your matter related to?'
-  }
-  if (msg.includes('practice') || msg.includes('service') || msg.includes('area') || msg.includes('what do you')) {
-    return 'Lex Dominion Partners offers comprehensive legal services in:\n\n• **Corporate Law** - Mergers, governance, compliance\n• **Litigation** - Civil and commercial disputes\n• **Real Estate** - Transactions and property law\n• **Family Law** - Divorce, custody, adoption\n• **Criminal Defense** - State and federal cases\n• **Intellectual Property** - Patents, trademarks, copyrights\n• **Immigration** - Visas, green cards, citizenship\n• **Tax Law** - Planning, compliance, disputes\n\nWould you like to know more about any specific area?'
-  }
-  if (msg.includes('hour') || msg.includes('open') || msg.includes('when')) {
-    return 'Our office hours are:\n\n• **Monday - Friday:** 9:00 AM - 6:00 PM\n• **Saturday:** 10:00 AM - 2:00 PM\n• **Sunday:** Closed\n\nWe also offer after-hours consultations by appointment. Call +1 (234) 567-890 to schedule.'
-  }
-  if (msg.includes('contact') || msg.includes('phone') || msg.includes('email') || msg.includes('address') || msg.includes('location')) {
-    return 'Here\'s how to reach us:\n\n• **Phone:** +1 (234) 567-890\n• **Email:** info@lexdominion.com\n• **Address:** 123 Legal Avenue, Suite 500, New York, NY 10001\n\nYou can also fill out our contact form at /contact.'
-  }
-  if (msg.includes('fee') || msg.includes('cost') || msg.includes('price') || msg.includes('charge') || msg.includes('expensive')) {
-    return 'Our fee structure varies based on the type and complexity of your case. We offer a **free initial consultation** where we can discuss your situation and provide a transparent fee estimate. We also offer flexible payment arrangements. Would you like to schedule a consultation?'
-  }
-  if (msg.includes('team') || msg.includes('attorney') || msg.includes('lawyer') || msg.includes('who')) {
-    return 'Our leadership team includes:\n\n• **Alexander Mensah** - Managing Partner (Corporate Law)\n• **Amara Adeyemi** - Senior Partner (Litigation)\n• **Kwame Okafor** - Partner (Real Estate)\n• **Nkechi Nkosi** - Partner (Family Law)\n• **Emeka Afolabi** - Partner (Criminal Defense)\n• **Sophia Dlamini** - Partner (Intellectual Property)\n• **Kofi Asante** - Partner (Immigration)\n• **Abena Osei** - Partner (Tax Law)\n\nVisit /team to see all our attorneys and their profiles.'
-  }
-  if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey') || msg.includes('good')) {
-    return 'Hello! Welcome to Lex Dominion Partners. I\'m Lex, your AI legal assistant. I can help you with:\n\n• Booking a consultation\n• Information about our practice areas\n• Contact details and office hours\n• General questions about our services\n\nHow can I assist you today?'
-  }
+export async function POST(req: NextRequest) {
+  try {
+    // Rate limiting
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { message: "You've sent too many messages. Please wait a moment before trying again.", action: 'none', quick_replies: [] },
+        { status: 429 }
+      )
+    }
 
-  return 'Thank you for your question. While I can help with general information about our firm and services, for specific legal matters, I\'d recommend scheduling a consultation with one of our attorneys. Would you like to:\n\n1. **Book a consultation** - Visit /booking\n2. **Learn about our services** - Visit /services\n3. **Contact us directly** - Call +1 (234) 567-890\n\nHow can I help?'
+    const { messages, sessionId } = await req.json()
+    const lastMessage = messages[messages.length - 1]?.content || ''
+
+    // Try OpenAI if API key is configured
+    if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here') {
+      try {
+        const systemPrompt = buildSystemPrompt()
+
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: CHATBOT_CONFIG.openai.model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              ...messages.slice(-CHATBOT_CONFIG.openai.maxHistoryMessages),
+            ],
+            max_tokens: CHATBOT_CONFIG.openai.maxTokens,
+            temperature: CHATBOT_CONFIG.openai.temperature,
+          }),
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          const rawContent = data.choices?.[0]?.message?.content || ''
+
+          // Try to parse as structured JSON
+          try {
+            const parsed = JSON.parse(rawContent)
+            return NextResponse.json({
+              message: parsed.message || rawContent,
+              action: parsed.action || 'none',
+              quick_replies: parsed.quick_replies || [],
+            })
+          } catch {
+            // If not valid JSON, wrap the raw text
+            return NextResponse.json({
+              message: rawContent,
+              action: 'none',
+              quick_replies: ['Book Consultation', 'Our Services', 'Contact Us'],
+            })
+          }
+        }
+      } catch (apiError) {
+        console.error('OpenAI API error:', apiError)
+        // Fall through to fallback
+      }
+    }
+
+    // Fallback: use knowledge base + intent detection
+    const fallback = getFallbackResponse(lastMessage)
+    return NextResponse.json(fallback)
+  } catch (error) {
+    console.error('AI Chat error:', error)
+    return NextResponse.json({
+      message: CHATBOT_CONFIG.errorMessage,
+      action: 'none',
+      quick_replies: ['Call +1 (234) 567-890', 'Email us'],
+    })
+  }
 }
