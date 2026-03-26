@@ -55,7 +55,7 @@ You MUST respond with valid JSON in this exact format — no markdown code fence
 
 ACTION VALUES (use exactly one):
 - "none" — normal conversational response
-- "book_appointment" — user wants to book a consultation. Include link to /booking in message.
+- "book_appointment" — user wants to book a consultation. The frontend will handle the booking flow inline — just confirm you'll help them book.
 - "capture_lead" — user wants to leave a message or be contacted. Ask for name and email.
 - "redirect" — user should be directed to a specific page. Include the path in message.
 - "show_services" — user wants to see practice areas overview.
@@ -64,7 +64,7 @@ ACTION VALUES (use exactly one):
 QUICK_REPLIES: Always suggest 2-4 short follow-up options (max 30 chars each) that are relevant to the conversation context.
 
 CONVERSATION FLOWS:
-1. BOOKING: When user wants to book → ask what practice area → suggest visiting /booking → confirm
+1. BOOKING: When user wants to book → return action "book_appointment". The frontend handles the full booking flow inline (collecting details, checking availability, confirming).
 2. LEAD CAPTURE: When user wants to leave a message → ask for name → ask for email → ask for their message → confirm receipt
 3. ESCALATION: When user seems frustrated → acknowledge → offer to connect with human → provide contact info or trigger lead capture
 4. FAQ: Search knowledge base first, then provide relevant answer with source
@@ -144,7 +144,7 @@ function getFallbackResponse(userMessage: string): object {
       }
     case 'booking':
       return {
-        message: "I'd be happy to help you book a consultation! You can schedule one directly on our [booking page](/booking), or call us at +1 (234) 567-890. Our initial consultations are **complimentary**.\n\nWhat practice area is your matter related to?",
+        message: "I can help you book a consultation right here! Our initial consultations are **complimentary**. Let me walk you through the process.",
         action: 'book_appointment',
         quick_replies: ['Corporate Law', 'Family Law', 'Criminal Defense', 'Immigration'],
       }
