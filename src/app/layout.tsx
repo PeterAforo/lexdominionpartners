@@ -38,6 +38,9 @@ export const metadata: Metadata = {
     'litigation',
     'Lex Dominion Partners',
   ],
+  icons: {
+    icon: '/icon.svg',
+  },
   openGraph: {
     title: 'Lex Dominion Partners | Law & Leadership',
     description:
