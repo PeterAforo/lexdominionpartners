@@ -134,8 +134,8 @@ export default function ServiceDetailPage() {
                   <p className="text-white/70 text-sm mb-6">Schedule a confidential consultation with our {service.title} team.</p>
                   <Link href="/booking" className="btn-primary w-full text-center text-sm">Book Consultation</Link>
                   <div className="mt-6 pt-6 border-t border-white/10">
-                    <a href="tel:+1234567890" className="flex items-center gap-2 text-gold-400 hover:text-gold-300 transition-colors">
-                      <Phone size={18} /> +1 (234) 567-890
+                    <a href="tel:+233264511778" className="flex items-center gap-2 text-gold-400 hover:text-gold-300 transition-colors">
+                      <Phone size={18} /> 0264511778
                     </a>
                   </div>
                 </div>

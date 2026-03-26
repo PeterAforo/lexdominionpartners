@@ -79,7 +79,7 @@ export default function AIAssistant() {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.message || 'I apologize, I\'m having trouble processing your request. Please try again or call us at +1 (234) 567-890.',
+        content: data.message || 'I apologize, I\'m having trouble processing your request. Please try again or call us at 0264511778.',
         timestamp: new Date(),
       }
 
@@ -88,7 +88,7 @@ export default function AIAssistant() {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'I\'m sorry, I\'m experiencing technical difficulties. Please contact us directly at +1 (234) 567-890 or email info@lexdominion.com.',
+        content: 'I\'m sorry, I\'m experiencing technical difficulties. Please contact us directly at 0264511778 or email info@lexdominion.com.',
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, errorMessage])

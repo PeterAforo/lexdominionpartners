@@ -21,21 +21,21 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
   {
     id: 'gen_002',
     question: 'Where is your office located?',
-    answer: 'Our office is located at 123 Legal Avenue, Suite 500, New York, NY 10001.',
+    answer: 'Our office is located at DVLA Adenta, directly opposite the Goil Filling Station @ Ritz Junction.',
     tags: ['location', 'address', 'office', 'where', 'directions'],
     category: 'contact',
   },
   {
     id: 'gen_003',
     question: 'What are your office hours?',
-    answer: 'Our office hours are:\n• **Monday – Friday:** 9:00 AM – 6:00 PM\n• **Saturday:** 10:00 AM – 2:00 PM\n• **Sunday:** Closed\n\nWe also offer after-hours consultations by appointment.',
+    answer: 'Our office hours are:\n• **Monday – Friday:** 9:00 AM – 5:00 PM\n• **Saturday:** Closed\n• **Sunday:** Closed\n\nWe also offer after-hours consultations by appointment.',
     tags: ['hours', 'open', 'when', 'schedule', 'time', 'available'],
     category: 'contact',
   },
   {
     id: 'gen_004',
     question: 'How can I contact the firm?',
-    answer: "Here's how to reach us:\n• **Phone:** +1 (234) 567-890\n• **Email:** info@lexdominion.com\n• **Address:** 123 Legal Avenue, Suite 500, New York, NY 10001\n\nYou can also fill out our contact form at [/contact](/contact).",
+    answer: "Here's how to reach us:\n• **Phone:** 0264511778\n• **Email:** info@lexdominion.com\n• **Address:** DVLA Adenta, directly opposite the Goil Filling Station @ Ritz Junction\n\nYou can also fill out our contact form at [/contact](/contact).",
     tags: ['contact', 'phone', 'email', 'reach', 'call'],
     category: 'contact',
   },
@@ -132,7 +132,7 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
   {
     id: 'book_001',
     question: 'How do I book a consultation?',
-    answer: "Booking a consultation is easy! You can:\n\n1. **Online:** Visit our [booking page](/booking) to select a date and time\n2. **Phone:** Call us at +1 (234) 567-890\n3. **Email:** Send your request to info@lexdominion.com\n\nOur initial consultations are **complimentary**. We'll review your situation and provide a transparent fee estimate.",
+    answer: "Booking a consultation is easy! You can:\n\n1. **Online:** Visit our [booking page](/booking) to select a date and time\n2. **Phone:** Call us at 0264511778\n3. **Email:** Send your request to info@lexdominion.com\n\nOur initial consultations are **complimentary**. We'll review your situation and provide a transparent fee estimate.",
     tags: ['book', 'consultation', 'appointment', 'schedule', 'meeting', 'reserve'],
     category: 'booking',
   },

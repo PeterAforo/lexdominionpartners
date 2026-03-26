@@ -48,9 +48,9 @@ export default function Navbar() {
       <div className="hidden lg:block bg-navy-800 text-white/80 text-sm">
         <div className="container-custom flex justify-between items-center py-2">
           <div className="flex items-center gap-6">
-            <a href="tel:+1234567890" className="flex items-center gap-2 hover:text-gold-400 transition-colors">
+            <a href="tel:+233264511778" className="flex items-center gap-2 hover:text-gold-400 transition-colors">
               <Phone size={14} />
-              <span>+1 (234) 567-890</span>
+              <span>0264511778</span>
             </a>
             <a href="mailto:info@lexdominion.com" className="flex items-center gap-2 hover:text-gold-400 transition-colors">
               <Mail size={14} />
@@ -58,7 +58,7 @@ export default function Navbar() {
             </a>
           </div>
           <div className="flex items-center gap-4">
-            <span>Mon - Fri: 9:00 AM - 6:00 PM</span>
+            <span>Mon - Fri: 9:00 AM - 5:00 PM</span>
           </div>
         </div>
       </div>

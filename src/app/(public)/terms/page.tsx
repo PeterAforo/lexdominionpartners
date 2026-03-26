@@ -92,8 +92,8 @@ export default function TermsOfServicePage() {
             <p>If you have questions about these Terms of Service, please contact us at:</p>
             <ul>
               <li><strong>Email:</strong> legal@lexdominion.com</li>
-              <li><strong>Phone:</strong> +1 (234) 567-890</li>
-              <li><strong>Address:</strong> 123 Legal Avenue, Suite 500, New York, NY 10001</li>
+              <li><strong>Phone:</strong> 0264511778</li>
+              <li><strong>Address:</strong> DVLA Adenta, directly opposite the Goil Filling Station @ Ritz Junction</li>
             </ul>
           </motion.div>
         </div>

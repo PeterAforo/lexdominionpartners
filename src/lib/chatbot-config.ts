@@ -7,7 +7,7 @@ export const CHATBOT_CONFIG = {
   tagline: 'AI Legal Assistant',
   greeting: "Hi there! 👋 I'm Lex, your AI legal assistant at Lex Dominion Partners. How can I help you today?",
   fallbackMessage: "I'm not sure about that, but I can connect you with one of our attorneys. Would you like to leave a message or book a consultation?",
-  errorMessage: "I'm experiencing technical difficulties right now. Please contact us directly at +1 (234) 567-890 or email info@lexdominion.com.",
+  errorMessage: "I'm experiencing technical difficulties right now. Please contact us directly at 0264511778 or email info@lexdominion.com.",
 
   // Personality
   personality: {
@@ -63,12 +63,12 @@ export const CHATBOT_CONFIG = {
 
   // Firm contact info
   contact: {
-    phone: '+1 (234) 567-890',
+    phone: '0264511778',
     email: 'info@lexdominion.com',
-    address: '123 Legal Avenue, Suite 500, New York, NY 10001',
+    address: 'DVLA Adenta, directly opposite the Goil Filling Station @ Ritz Junction',
     hours: {
-      weekday: 'Monday - Friday: 9:00 AM - 6:00 PM',
-      saturday: 'Saturday: 10:00 AM - 2:00 PM',
+      weekday: 'Monday - Friday: 9:00 AM - 5:00 PM',
+      saturday: 'Saturday: Closed',
       sunday: 'Sunday: Closed',
     },
   },

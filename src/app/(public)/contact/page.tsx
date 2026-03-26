@@ -25,10 +25,10 @@ export default function ContactPage() {
   }
 
   const contactInfo = [
-    { icon: MapPin, title: 'Visit Us', lines: ['123 Legal Avenue, Suite 500', 'New York, NY 10001'] },
-    { icon: Phone, title: 'Call Us', lines: ['+1 (234) 567-890', '+1 (234) 567-891'] },
-    { icon: Mail, title: 'Email Us', lines: ['info@lexdominion.com', 'support@lexdominion.com'] },
-    { icon: Clock, title: 'Office Hours', lines: ['Mon - Fri: 9:00 AM - 6:00 PM', 'Sat: 10:00 AM - 2:00 PM'] },
+    { icon: MapPin, title: 'Visit Us', lines: ['DVLA Adenta, directly opposite', 'the Goil Filling Station @ Ritz Junction'] },
+    { icon: Phone, title: 'Call Us', lines: ['0264511778'] },
+    { icon: Mail, title: 'Email Us', lines: ['info@lexdominion.com'] },
+    { icon: Clock, title: 'Office Hours', lines: ['Mon - Fri: 9:00 AM - 5:00 PM', 'Weekends: Closed'] },
   ]
 
   return (
@@ -74,7 +74,7 @@ export default function ContactPage() {
                   <div className="text-center p-8">
                     <MapPin size={64} className="text-gold-400/50 mx-auto mb-4" />
                     <h3 className="text-white font-heading text-xl font-semibold mb-2">Our Location</h3>
-                    <p className="text-white/80 text-sm">123 Legal Avenue, Suite 500<br />New York, NY 10001</p>
+                    <p className="text-white/80 text-sm">DVLA Adenta, directly opposite<br />the Goil Filling Station @ Ritz Junction</p>
                   </div>
                 </div>
               </div>

@@ -135,18 +135,18 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="text-gold-400 mt-0.5 shrink-0" />
                 <span className="text-sm">
-                  123 Legal Avenue, Suite 500
+                  DVLA Adenta, directly opposite
                   <br />
-                  New York, NY 10001
+                  the Goil Filling Station @ Ritz Junction
                 </span>
               </li>
               <li>
                 <a
-                  href="tel:+1234567890"
+                  href="tel:+233264511778"
                   className="flex items-center gap-3 text-sm hover:text-gold-400 transition-colors"
                 >
                   <Phone size={18} className="text-gold-400 shrink-0" />
-                  +1 (234) 567-890
+                  0264511778
                 </a>
               </li>
               <li>
@@ -161,9 +161,9 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <Clock size={18} className="text-gold-400 mt-0.5 shrink-0" />
                 <span className="text-sm">
-                  Mon - Fri: 9:00 AM - 6:00 PM
+                  Mon - Fri: 9:00 AM - 5:00 PM
                   <br />
-                  Sat: 10:00 AM - 2:00 PM
+                  Weekends: Closed
                 </span>
               </li>
             </ul>

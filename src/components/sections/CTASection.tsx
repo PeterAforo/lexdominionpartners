@@ -40,9 +40,9 @@ export default function CTASection() {
                 Book Free Consultation
                 <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <a href="tel:+1234567890" className="btn-secondary text-base flex items-center gap-2">
+              <a href="tel:+233264511778" className="btn-secondary text-base flex items-center gap-2">
                 <Phone size={18} />
-                +1 (234) 567-890
+                0264511778
               </a>
             </div>
           </div>

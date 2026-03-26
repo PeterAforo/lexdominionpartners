@@ -26,19 +26,17 @@ export async function POST(req: NextRequest) {
     // Check what day of the week it is (UTC)
     const dayOfWeek = startOfDay.getUTCDay() // 0=Sun, 6=Sat
 
-    // Sunday — closed
-    if (dayOfWeek === 0) {
+    // Weekends — closed (Saturday = 6, Sunday = 0)
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
       return NextResponse.json({
         available: false,
-        message: 'Our office is closed on Sundays. Please choose another date.',
+        message: 'Our office is closed on weekends. Please choose a weekday (Monday - Friday).',
         availableSlots: [],
         bookedSlots: [],
       })
     }
 
-    // Saturday — limited hours (10 AM - 2 PM)
-    const saturdaySlots = ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '1:00 PM', '1:30 PM']
-    const daySlots = dayOfWeek === 6 ? saturdaySlots : ALL_TIME_SLOTS
+    const daySlots = ALL_TIME_SLOTS
 
     // Find existing bookings for this date
     const existingBookings = await prisma.booking.findMany({

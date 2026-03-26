@@ -183,7 +183,7 @@ function getFallbackResponse(userMessage: string): object {
       }
     case 'escalate':
       return {
-        message: "I'm sorry you're having trouble. Let me connect you with our team directly. You can:\n\n• **Call:** +1 (234) 567-890\n• **Email:** info@lexdominion.com\n• **Contact form:** [/contact](/contact)\n\nOr I can take your details and have someone reach out to you. Would you like that?",
+        message: "I'm sorry you're having trouble. Let me connect you with our team directly. You can:\n\n• **Call:** 0264511778\n• **Email:** info@lexdominion.com\n• **Contact form:** [/contact](/contact)\n\nOr I can take your details and have someone reach out to you. Would you like that?",
         action: 'escalate',
         quick_replies: ['Leave a message', 'Call the office', 'Book consultation'],
       }
@@ -195,7 +195,7 @@ function getFallbackResponse(userMessage: string): object {
       }
     default:
       return {
-        message: "Thank you for your question. While I can help with general information about our firm and services, for specific legal matters, I'd recommend scheduling a consultation with one of our attorneys.\n\nWould you like to:\n\n1. **Book a consultation** — Visit [/booking](/booking)\n2. **Learn about our services** — Visit [/services](/services)\n3. **Contact us directly** — Call +1 (234) 567-890",
+        message: "Thank you for your question. While I can help with general information about our firm and services, for specific legal matters, I'd recommend scheduling a consultation with one of our attorneys.\n\nWould you like to:\n\n1. **Book a consultation** — Visit [/booking](/booking)\n2. **Learn about our services** — Visit [/services](/services)\n3. **Contact us directly** — Call 0264511778",
         action: 'none',
         quick_replies: ['Book Consultation', 'Our Services', 'Contact Us'],
       }
@@ -292,7 +292,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       message: CHATBOT_CONFIG.errorMessage,
       action: 'none',
-      quick_replies: ['Call +1 (234) 567-890', 'Email us'],
+      quick_replies: ['Call 0264511778', 'Email us'],
     })
   }
 }
