@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { GSAPTextReveal } from '@/components/animations/GSAPWrapper'
 import { MotionDiv } from '@/components/animations/MotionWrapper'
@@ -61,11 +62,20 @@ export default function ContactPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <MotionDiv>
-              <div className="bg-navy-800 rounded-sm p-8 h-full flex items-center justify-center min-h-[400px]">
-                <div className="text-center">
-                  <MapPin size={64} className="text-gold-400/30 mx-auto mb-4" />
-                  <h3 className="text-white font-heading text-xl font-semibold mb-2">Our Location</h3>
-                  <p className="text-white/60 text-sm">123 Legal Avenue, Suite 500<br />New York, NY 10001</p>
+              <div className="bg-navy-800 rounded-sm h-full min-h-[400px] relative overflow-hidden">
+                <Image
+                  src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80"
+                  alt="Lex Dominion Partners office building"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-navy-900/60" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center p-8">
+                    <MapPin size={64} className="text-gold-400/50 mx-auto mb-4" />
+                    <h3 className="text-white font-heading text-xl font-semibold mb-2">Our Location</h3>
+                    <p className="text-white/80 text-sm">123 Legal Avenue, Suite 500<br />New York, NY 10001</p>
+                  </div>
                 </div>
               </div>
             </MotionDiv>

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { GSAPReveal, GSAPCounter } from '@/components/animations/GSAPWrapper'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
@@ -28,22 +29,13 @@ export default function AboutPreview() {
           <GSAPReveal animation="fadeLeft">
             <div className="relative">
               <div className="aspect-[4/3] bg-navy-800 rounded-sm overflow-hidden relative">
-                <div
-                  className="absolute inset-0 opacity-20"
-                  style={{
-                    backgroundImage: `linear-gradient(135deg, #C5A54E 0%, transparent 50%)`,
-                  }}
+                <Image
+                  src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80"
+                  alt="Professional legal team in discussion"
+                  fill
+                  className="object-cover"
                 />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <div className="text-8xl font-heading font-bold text-gold-400/20">
-                      25+
-                    </div>
-                    <div className="text-xl text-white/80 font-heading mt-2">
-                      Years of Legal Excellence
-                    </div>
-                  </div>
-                </div>
+                <div className="absolute inset-0 bg-navy-900/30" />
               </div>
               {/* Floating card */}
               <motion.div

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { GSAPTextReveal } from '@/components/animations/GSAPWrapper'
 import { StaggerContainer, StaggerItem } from '@/components/animations/MotionWrapper'
@@ -13,6 +14,7 @@ const blogPosts = [
     date: '2026-03-20',
     category: 'Corporate Law',
     slug: 'understanding-corporate-mergers',
+    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80',
   },
   {
     title: 'Protecting Your Intellectual Property in the Digital Age',
@@ -20,6 +22,7 @@ const blogPosts = [
     date: '2026-03-15',
     category: 'Intellectual Property',
     slug: 'protecting-ip-digital-age',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80',
   },
   {
     title: 'Family Law Updates: What You Need to Know in 2026',
@@ -27,6 +30,7 @@ const blogPosts = [
     date: '2026-03-10',
     category: 'Family Law',
     slug: 'family-law-updates-2026',
+    image: 'https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=600&q=80',
   },
 ]
 
@@ -55,7 +59,8 @@ export default function BlogPreview() {
             <StaggerItem key={post.slug}>
               <Link href={`/blog/${post.slug}`} className="group block bg-white rounded-sm overflow-hidden card-hover h-full">
                 <div className="h-48 bg-navy-800 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-gold-400/20 to-navy-900/80" />
+                  <Image src={post.image} alt={post.title} fill className="object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-gold-400/10 to-navy-900/60" />
                   <div className="absolute bottom-4 left-4">
                     <span className="px-3 py-1 bg-gold-400 text-navy-800 text-xs font-semibold rounded-sm">
                       {post.category}

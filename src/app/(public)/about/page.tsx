@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { GSAPReveal, GSAPTextReveal, GSAPCounter } from '@/components/animations/GSAPWrapper'
 import { StaggerContainer, StaggerItem } from '@/components/animations/MotionWrapper'
@@ -47,10 +48,13 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <GSAPReveal animation="fadeLeft">
               <div className="relative">
-                <div className="aspect-[4/3] bg-navy-800 rounded-sm overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Scale size={120} className="text-gold-400/20" />
-                  </div>
+                <div className="aspect-[4/3] bg-navy-800 rounded-sm overflow-hidden relative">
+                  <Image
+                    src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
+                    alt="Professional team collaborating in office"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
                 <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gold-400 rounded-sm" />
               </div>

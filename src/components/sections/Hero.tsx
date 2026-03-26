@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import gsap from 'gsap'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { ArrowRight, Scale, Shield } from 'lucide-react'
 
 export default function Hero() {
@@ -50,19 +51,21 @@ export default function Hero() {
       ref={heroRef}
       className="relative min-h-[90vh] flex items-center overflow-hidden bg-navy-800"
     >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1920&q=80"
+          alt="Professional law office"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-navy-900/80" />
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 opacity-10"
           style={{
             backgroundImage: `radial-gradient(circle at 25% 50%, rgba(197, 165, 78, 0.3) 0%, transparent 50%),
                              radial-gradient(circle at 75% 50%, rgba(197, 165, 78, 0.15) 0%, transparent 50%)`,
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C5A54E' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }}
         />
       </div>

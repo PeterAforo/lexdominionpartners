@@ -1,38 +1,43 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GSAPTextReveal } from '@/components/animations/GSAPWrapper'
 import { Quote, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 
 const testimonials = [
   {
-    name: 'Robert Anderson',
-    title: 'CEO, Anderson Holdings',
+    name: 'Robert Owusu',
+    title: 'CEO, Owusu Holdings',
     content:
       'Lex Dominion Partners provided exceptional counsel during our merger. Their expertise in corporate law and strategic thinking were invaluable. They anticipated challenges before they arose and ensured a smooth transaction.',
     rating: 5,
+    image: 'https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=200&q=80',
   },
   {
-    name: 'Sarah Mitchell',
+    name: 'Amina Diallo',
     title: 'Real Estate Developer',
     content:
       'Working with Lex Dominion on our property portfolio was a game-changer. Their real estate team handled complex transactions with precision and always kept us informed. Truly a top-tier law firm.',
     rating: 5,
+    image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80',
   },
   {
-    name: 'James Worthington',
+    name: 'Kwame Mensah',
     title: 'Private Client',
     content:
       'During a very difficult family matter, the team at Lex Dominion showed both compassion and legal brilliance. They fought for my rights while maintaining dignity throughout the process.',
     rating: 5,
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
   },
   {
-    name: 'Elena Rodriguez',
+    name: 'Ngozi Adekunle',
     title: 'Founder, TechStart Inc.',
     content:
       'Their intellectual property team helped us secure patents and protect our innovations. The attorneys at Lex Dominion truly understand the tech landscape and provide proactive legal strategies.',
     rating: 5,
+    image: 'https://images.unsplash.com/photo-1589156229687-496a31ad1d1f?w=200&q=80',
   },
 ]
 
@@ -108,10 +113,8 @@ export default function Testimonials() {
 
               {/* Author */}
               <div>
-                <div className="w-16 h-16 rounded-full bg-gold-400/20 mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-gold-400 font-heading font-bold text-xl">
-                    {testimonials[current].name.charAt(0)}
-                  </span>
+                <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 relative">
+                  <Image src={testimonials[current].image} alt={testimonials[current].name} fill className="object-cover" />
                 </div>
                 <h4 className="text-white font-semibold text-lg">
                   {testimonials[current].name}

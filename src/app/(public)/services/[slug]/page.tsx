@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { GSAPTextReveal } from '@/components/animations/GSAPWrapper'
 import { MotionDiv } from '@/components/animations/MotionWrapper'
@@ -75,11 +76,21 @@ export default function ServiceDetailPage() {
   return (
     <>
       <section className="relative py-24 bg-navy-800">
+        <div className="absolute inset-0">
+          <Image
+            src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&q=80"
+            alt={service.title}
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-navy-900/85" />
+        </div>
         <div className="container-custom relative z-10">
           <Link href="/services" className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 transition-colors mb-8">
             <ArrowLeft size={18} /> Back to Practice Areas
           </Link>
           <GSAPTextReveal text={service.title} tag="h1" className="text-4xl md:text-6xl font-bold text-white" />
+          <p className="text-white/70 text-lg mt-4 max-w-2xl">{service.description}</p>
         </div>
       </section>
 

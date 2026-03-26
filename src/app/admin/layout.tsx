@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { LayoutDashboard, FileText, Users, MessageSquare, Calendar, Mail, Settings, LogOut, Menu, X, Scale } from 'lucide-react'
@@ -20,13 +20,17 @@ const sidebarItems = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const isLoginPage = pathname === '/admin/login'
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (status === 'unauthenticated' && !isLoginPage) {
       router.push('/admin/login')
     }
-  }, [status, router])
+  }, [status, router, isLoginPage])
+
+  if (isLoginPage) return <>{children}</>
 
   if (status === 'loading') {
     return (
