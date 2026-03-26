@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const FIRM_KNOWLEDGE = `
-You are the AI assistant for Lex Dominion Partners, a premier law firm. Tagline: "Law & Leadership".
+You are Lex, the AI legal assistant for Lex Dominion Partners, a premier law firm. Tagline: "Law & Leadership". Always introduce yourself as "Lex" when greeting users.
 
 PRACTICE AREAS: Corporate Law, Litigation, Real Estate, Family Law, Criminal Defense, Intellectual Property, Immigration, Tax Law.
 
@@ -12,12 +12,14 @@ CONTACT INFO:
 - Hours: Mon-Fri 9AM-6PM, Sat 10AM-2PM
 
 KEY TEAM MEMBERS:
-- Alexander Whitmore - Managing Partner, Corporate Law
-- Victoria Chen - Senior Partner, Litigation
-- Marcus Rivera - Partner, Real Estate
-- Catherine Okafor - Partner, Family Law
-- Jonathan Drake - Partner, Criminal Defense
-- Sophia Nakamura - Partner, Intellectual Property
+- Alexander Mensah - Managing Partner, Corporate Law
+- Amara Adeyemi - Senior Partner, Litigation
+- Kwame Okafor - Partner, Real Estate
+- Nkechi Nkosi - Partner, Family Law
+- Emeka Afolabi - Partner, Criminal Defense
+- Sophia Dlamini - Partner, Intellectual Property
+- Kofi Asante - Partner, Immigration
+- Abena Osei - Partner, Tax Law
 
 BOOKING: Direct users to /booking page or offer to help them start the booking process. Consultations are free for the first meeting.
 
@@ -87,10 +89,10 @@ function getFallbackResponse(userMessage: string): string {
     return 'Our fee structure varies based on the type and complexity of your case. We offer a **free initial consultation** where we can discuss your situation and provide a transparent fee estimate. We also offer flexible payment arrangements. Would you like to schedule a consultation?'
   }
   if (msg.includes('team') || msg.includes('attorney') || msg.includes('lawyer') || msg.includes('who')) {
-    return 'Our leadership team includes:\n\n• **Alexander Whitmore** - Managing Partner (Corporate Law)\n• **Victoria Chen** - Senior Partner (Litigation)\n• **Marcus Rivera** - Partner (Real Estate)\n• **Catherine Okafor** - Partner (Family Law)\n• **Jonathan Drake** - Partner (Criminal Defense)\n• **Sophia Nakamura** - Partner (Intellectual Property)\n\nVisit /team to see all our attorneys and their profiles.'
+    return 'Our leadership team includes:\n\n• **Alexander Mensah** - Managing Partner (Corporate Law)\n• **Amara Adeyemi** - Senior Partner (Litigation)\n• **Kwame Okafor** - Partner (Real Estate)\n• **Nkechi Nkosi** - Partner (Family Law)\n• **Emeka Afolabi** - Partner (Criminal Defense)\n• **Sophia Dlamini** - Partner (Intellectual Property)\n• **Kofi Asante** - Partner (Immigration)\n• **Abena Osei** - Partner (Tax Law)\n\nVisit /team to see all our attorneys and their profiles.'
   }
   if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey') || msg.includes('good')) {
-    return 'Hello! Welcome to Lex Dominion Partners. I\'m here to help you with:\n\n• Booking a consultation\n• Information about our practice areas\n• Contact details and office hours\n• General questions about our services\n\nHow can I assist you today?'
+    return 'Hello! Welcome to Lex Dominion Partners. I\'m Lex, your AI legal assistant. I can help you with:\n\n• Booking a consultation\n• Information about our practice areas\n• Contact details and office hours\n• General questions about our services\n\nHow can I assist you today?'
   }
 
   return 'Thank you for your question. While I can help with general information about our firm and services, for specific legal matters, I\'d recommend scheduling a consultation with one of our attorneys. Would you like to:\n\n1. **Book a consultation** - Visit /booking\n2. **Learn about our services** - Visit /services\n3. **Contact us directly** - Call +1 (234) 567-890\n\nHow can I help?'

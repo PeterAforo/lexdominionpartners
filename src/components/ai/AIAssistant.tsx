@@ -25,7 +25,7 @@ export default function AIAssistant() {
     {
       id: '1',
       role: 'assistant',
-      content: 'Welcome to Lex Dominion Partners! I\'m your AI legal assistant. I can help you book consultations, learn about our practice areas, or answer general questions. How may I assist you today?',
+      content: 'Welcome to Lex Dominion Partners! I\'m Lex, your AI legal assistant. I can help you book consultations, learn about our practice areas, or answer general questions. How may I assist you today?',
       timestamp: new Date(),
     },
   ])
@@ -145,8 +145,8 @@ export default function AIAssistant() {
                   <Bot size={22} className="text-gold-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm">Lex AI Assistant</h3>
-                  <p className="text-xs text-white/60">Online • Ready to help</p>
+                  <h3 className="font-semibold text-sm">Lex</h3>
+                  <p className="text-xs text-white/60">AI Legal Assistant • Online</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
