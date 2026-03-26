@@ -174,7 +174,7 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="container-custom py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-          <p>&copy; {new Date().getFullYear()} Lex Dominion Partners. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Lex Dominion Partners. All rights reserved. Developed by <a href="http://www.mcaforo.com" target="_blank" rel="noopener noreferrer" className="text-gold-400 hover:text-gold-300 transition-colors">McAforo</a></p>
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:text-gold-400 transition-colors">
               Privacy Policy
