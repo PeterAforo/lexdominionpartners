@@ -12,32 +12,48 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error('Invalid credentials')
-        }
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            console.error('[AUTH] Missing email or password')
+            throw new Error('Invalid credentials')
+          }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        })
+          console.log('[AUTH] Login attempt for:', credentials.email)
 
-        if (!user || !user.password) {
-          throw new Error('Invalid credentials')
-        }
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          })
 
-        const isCorrectPassword = await bcrypt.compare(
-          credentials.password,
-          user.password
-        )
+          if (!user) {
+            console.error('[AUTH] No user found for:', credentials.email)
+            throw new Error('Invalid credentials')
+          }
 
-        if (!isCorrectPassword) {
-          throw new Error('Invalid credentials')
-        }
+          if (!user.password) {
+            console.error('[AUTH] User has no password:', credentials.email)
+            throw new Error('Invalid credentials')
+          }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
+          const isCorrectPassword = await bcrypt.compare(
+            credentials.password,
+            user.password
+          )
+
+          if (!isCorrectPassword) {
+            console.error('[AUTH] Password mismatch for:', credentials.email)
+            throw new Error('Invalid credentials')
+          }
+
+          console.log('[AUTH] Login successful for:', credentials.email)
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          }
+        } catch (error: any) {
+          console.error('[AUTH] Authorize error:', error.message)
+          throw error
         }
       },
     }),
