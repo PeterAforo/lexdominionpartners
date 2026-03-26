@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
+import { requireAdmin } from '@/lib/api-auth'
+import { createContactSchema } from '@/lib/validations'
+import { isRateLimited, getClientIp } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
-    const { name, email, phone, subject, message } = body
-
-    if (!name || !email || !subject || !message) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    const ip = getClientIp(req.headers)
+    if (isRateLimited(ip, 5, 60 * 1000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
     }
+
+    const body = await req.json()
+    const parsed = createContactSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten().fieldErrors }, { status: 400 })
+    }
+
+    const { name, email, phone, subject, message } = parsed.data
 
     const contactMessage = await prisma.contactMessage.create({
       data: { name, email, phone: phone || null, subject, message },
@@ -22,6 +31,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
+  const auth = await requireAdmin()
+  if (!auth.authorized) return auth.response
+
   try {
     const messages = await prisma.contactMessage.findMany({
       orderBy: { createdAt: 'desc' },

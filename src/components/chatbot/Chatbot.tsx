@@ -50,7 +50,7 @@ export default function Chatbot() {
               {/* Close button */}
               <button
                 onClick={dismissPopup}
-                className="absolute top-2 right-2 w-5 h-5 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
                 aria-label="Dismiss"
               >
                 <X size={12} className="text-gray-500" />

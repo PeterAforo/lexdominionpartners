@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
+import { requireAdmin } from '@/lib/api-auth'
+import { createBlogSchema } from '@/lib/validations'
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,13 +20,17 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const auth = await requireAdmin()
+  if (!auth.authorized) return auth.response
+
   try {
     const body = await req.json()
-    const { title, slug, excerpt, content, image, category, tags, published, authorId } = body
-
-    if (!title || !slug || !content || !authorId) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    const parsed = createBlogSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten().fieldErrors }, { status: 400 })
     }
+
+    const { title, slug, excerpt, content, image, category, tags, published, authorId } = parsed.data
 
     const post = await prisma.blogPost.create({
       data: {

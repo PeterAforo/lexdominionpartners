@@ -78,9 +78,9 @@ export default function AdminBookingsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <button onClick={() => updateStatus(b.id, 'CONFIRMED')} className="p-1 text-green-600 hover:bg-green-50 rounded" title="Confirm"><CheckCircle2 size={16} /></button>
-                        <button onClick={() => updateStatus(b.id, 'CANCELLED')} className="p-1 text-red-600 hover:bg-red-50 rounded" title="Cancel"><XCircle size={16} /></button>
-                        <button onClick={() => deleteBooking(b.id)} className="p-1 text-gray-400 hover:bg-gray-100 rounded" title="Delete"><Trash2 size={16} /></button>
+                        <button onClick={() => updateStatus(b.id, 'CONFIRMED')} className="p-2 text-green-600 hover:bg-green-50 rounded" title="Confirm"><CheckCircle2 size={16} /></button>
+                        <button onClick={() => updateStatus(b.id, 'CANCELLED')} className="p-2 text-red-600 hover:bg-red-50 rounded" title="Cancel"><XCircle size={16} /></button>
+                        <button onClick={() => deleteBooking(b.id)} className="p-2 text-gray-400 hover:bg-gray-100 rounded" title="Delete"><Trash2 size={16} /></button>
                       </div>
                     </td>
                   </tr>

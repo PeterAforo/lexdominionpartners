@@ -33,6 +33,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -160,21 +161,38 @@ export default function Navbar() {
               <div className="container-custom py-4 space-y-1">
                 {navLinks.map((link) => (
                   <div key={link.label}>
-                    <Link
-                      href={link.href}
-                      onClick={() => !link.children && setIsMobileOpen(false)}
-                      className="block py-3 px-4 text-navy-700 font-medium hover:text-gold-500 transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                    {link.children && (
+                    {link.children ? (
+                      <button
+                        onClick={() => setMobileDropdownOpen(mobileDropdownOpen === link.label ? null : link.label)}
+                        className="flex items-center justify-between w-full py-3 px-4 text-navy-700 font-medium hover:text-gold-500 transition-colors"
+                      >
+                        {link.label}
+                        <ChevronDown size={16} className={`transition-transform ${mobileDropdownOpen === link.label ? 'rotate-180' : ''}`} />
+                      </button>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        onClick={() => setIsMobileOpen(false)}
+                        className="block py-3 px-4 text-navy-700 font-medium hover:text-gold-500 transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
+                    {link.children && mobileDropdownOpen === link.label && (
                       <div className="pl-8 space-y-1">
+                        <Link
+                          href={link.href}
+                          onClick={() => setIsMobileOpen(false)}
+                          className="block py-3 text-sm font-medium text-gold-500 hover:text-gold-600 transition-colors"
+                        >
+                          View All {link.label}
+                        </Link>
                         {link.children.map((child) => (
                           <Link
                             key={child.label}
                             href={child.href}
                             onClick={() => setIsMobileOpen(false)}
-                            className="block py-2 text-sm text-gray-600 hover:text-gold-500 transition-colors"
+                            className="block py-3 text-sm text-gray-600 hover:text-gold-500 transition-colors"
                           >
                             {child.label}
                           </Link>

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
+import { requireAdmin } from '@/lib/api-auth'
+import { updateTestimonialSchema } from '@/lib/validations'
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -12,11 +14,19 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  const auth = await requireAdmin()
+  if (!auth.authorized) return auth.response
+
   try {
     const body = await req.json()
+    const parsed = updateTestimonialSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten().fieldErrors }, { status: 400 })
+    }
+
     const testimonial = await prisma.testimonial.update({
       where: { id: params.id },
-      data: body,
+      data: parsed.data,
     })
     return NextResponse.json(testimonial)
   } catch (error) {
@@ -25,6 +35,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+  const auth = await requireAdmin()
+  if (!auth.authorized) return auth.response
+
   try {
     await prisma.testimonial.delete({ where: { id: params.id } })
     return NextResponse.json({ success: true })

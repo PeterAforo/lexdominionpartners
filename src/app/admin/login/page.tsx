@@ -31,7 +31,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-navy-800 flex items-center justify-center p-4">
+    <div className="min-h-dvh bg-navy-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gold-400/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
           <button type="submit" disabled={loading} className="w-full btn-primary flex items-center justify-center gap-2">
             {loading ? <><Loader2 size={18} className="animate-spin" /> Signing in...</> : 'Sign In'}
           </button>
-          <p className="text-center text-xs text-gray-400">Default: admin@lexdominion.com / admin123</p>
+          <p className="text-center text-xs text-gray-400">Authorized personnel only</p>
         </form>
       </div>
     </div>

@@ -11,8 +11,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         position="top-right"
         toastOptions={{
           duration: 4000,
-          style: { background: '#1B2A4A', color: '#fff', borderRadius: '2px' },
-          success: { iconTheme: { primary: '#C5A54E', secondary: '#1B2A4A' } },
+          style: { background: '#2D2D2D', color: '#fff', borderRadius: '2px' },
+          success: { iconTheme: { primary: '#C5A54E', secondary: '#2D2D2D' } },
         }}
       />
     </SessionProvider>

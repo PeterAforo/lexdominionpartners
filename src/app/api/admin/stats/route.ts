@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
+import { requireAdmin } from '@/lib/api-auth'
 
 export async function GET() {
+  const auth = await requireAdmin()
+  if (!auth.authorized) return auth.response
+
   try {
     const [
       bookingsCount,

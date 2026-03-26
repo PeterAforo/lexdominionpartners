@@ -44,7 +44,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!session) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-dvh bg-gray-50 flex">
       {/* Sidebar Overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />

@@ -99,12 +99,12 @@ export default function BookingPage() {
                 <div className="space-y-6">
                   <h2 className="text-2xl font-heading font-bold text-navy-800 mb-6">Personal Information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" placeholder="First Name *" required value={form.firstName} onChange={(e) => updateForm('firstName', e.target.value)} className="px-4 py-3 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" />
-                    <input type="text" placeholder="Last Name *" required value={form.lastName} onChange={(e) => updateForm('lastName', e.target.value)} className="px-4 py-3 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" />
+                    <input type="text" placeholder="First Name *" required autoComplete="given-name" value={form.firstName} onChange={(e) => updateForm('firstName', e.target.value)} className="px-4 py-3 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" />
+                    <input type="text" placeholder="Last Name *" required autoComplete="family-name" value={form.lastName} onChange={(e) => updateForm('lastName', e.target.value)} className="px-4 py-3 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="email" placeholder="Email Address *" required value={form.email} onChange={(e) => updateForm('email', e.target.value)} className="px-4 py-3 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" />
-                    <input type="tel" placeholder="Phone Number *" required value={form.phone} onChange={(e) => updateForm('phone', e.target.value)} className="px-4 py-3 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" />
+                    <input type="email" placeholder="Email Address *" required autoComplete="email" value={form.email} onChange={(e) => updateForm('email', e.target.value)} className="px-4 py-3 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" />
+                    <input type="tel" placeholder="Phone Number *" required autoComplete="tel" value={form.phone} onChange={(e) => updateForm('phone', e.target.value)} className="px-4 py-3 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Practice Area *</label>
@@ -152,7 +152,7 @@ export default function BookingPage() {
                 <div className="space-y-6">
                   <h2 className="text-2xl font-heading font-bold text-navy-800 mb-6">Confirm Your Booking</h2>
                   <div className="bg-gray-50 rounded-sm p-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                       <div><span className="text-gray-500">Name:</span><p className="font-medium text-navy-800">{form.firstName} {form.lastName}</p></div>
                       <div><span className="text-gray-500">Email:</span><p className="font-medium text-navy-800">{form.email}</p></div>
                       <div><span className="text-gray-500">Phone:</span><p className="font-medium text-navy-800">{form.phone}</p></div>

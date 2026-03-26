@@ -44,7 +44,7 @@ export default function TeamPage() {
                     <div className="aspect-[3/4] bg-navy-800 relative overflow-hidden">
                       <Image src={member.image} alt={member.name} fill className="object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-navy-900/80" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <div className="absolute bottom-0 left-0 right-0 p-4 max-sm:translate-y-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                         <div className="flex gap-3 justify-center">
                           <span className="w-9 h-9 bg-gold-400 rounded-full flex items-center justify-center"><Mail size={16} className="text-navy-800" /></span>
                           <span className="w-9 h-9 bg-gold-400 rounded-full flex items-center justify-center"><Phone size={16} className="text-navy-800" /></span>

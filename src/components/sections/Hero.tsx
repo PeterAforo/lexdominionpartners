@@ -57,6 +57,7 @@ export default function Hero() {
           src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1920&q=80"
           alt="Professional law office"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />

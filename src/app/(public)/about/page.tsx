@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import { GSAPReveal, GSAPTextReveal, GSAPCounter } from '@/components/animations/GSAPWrapper'
 import { StaggerContainer, StaggerItem } from '@/components/animations/MotionWrapper'
 import { Award, Users, Scale, Shield, Target, Eye, Heart, CheckCircle2 } from 'lucide-react'
-import type { Metadata } from 'next'
 
 const values = [
   { icon: Shield, title: 'Integrity', description: 'We uphold the highest ethical standards in every interaction and case we handle.' },

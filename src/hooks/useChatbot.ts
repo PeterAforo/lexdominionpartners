@@ -645,10 +645,16 @@ export function useChatbot() {
     setIsOpen(true)
     setIsMinimized(false)
     setUnreadCount(0)
+    if (typeof window !== 'undefined' && window.innerWidth < 640) {
+      document.body.style.overflow = 'hidden'
+    }
   }, [])
 
   const closeChat = useCallback(() => {
     setIsOpen(false)
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = ''
+    }
   }, [])
 
   const toggleMinimize = useCallback(() => {
