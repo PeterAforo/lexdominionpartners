@@ -5,10 +5,16 @@ import { updateBlogSchema } from '@/lib/validations'
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const post = await prisma.blogPost.findUnique({
+    let post = await prisma.blogPost.findUnique({
       where: { id: params.id },
       include: { author: { select: { name: true, email: true } } },
     })
+    if (!post) {
+      post = await prisma.blogPost.findUnique({
+        where: { slug: params.id },
+        include: { author: { select: { name: true, email: true } } },
+      })
+    }
     if (!post) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     return NextResponse.json(post)
   } catch (error) {

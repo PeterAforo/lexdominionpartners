@@ -5,7 +5,10 @@ import { updateServiceSchema } from '@/lib/validations'
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const service = await prisma.service.findUnique({ where: { id: params.id } })
+    let service = await prisma.service.findUnique({ where: { id: params.id } })
+    if (!service) {
+      service = await prisma.service.findUnique({ where: { slug: params.id } })
+    }
     if (!service) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     return NextResponse.json(service)
   } catch (error) {

@@ -5,7 +5,16 @@ import { updateTeamSchema } from '@/lib/validations'
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const member = await prisma.teamMember.findUnique({ where: { id: params.id } })
+    let member = await prisma.teamMember.findUnique({
+      where: { id: params.id },
+      include: { services: { include: { service: true } } },
+    })
+    if (!member) {
+      member = await prisma.teamMember.findUnique({
+        where: { slug: params.id },
+        include: { services: { include: { service: true } } },
+      })
+    }
     if (!member) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     return NextResponse.json(member)
   } catch (error) {

@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { GSAPTextReveal } from '@/components/animations/GSAPWrapper'
 import { Quote, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 
-const testimonials = [
+const fallbackTestimonials = [
   {
     name: 'Robert Owusu',
     title: 'CEO, Owusu Holdings',
@@ -41,9 +41,31 @@ const testimonials = [
   },
 ]
 
+interface TestimonialData {
+  id?: string
+  name: string
+  title?: string | null
+  company?: string | null
+  content: string
+  rating: number
+  image?: string | null
+}
+
 export default function Testimonials() {
+  const [testimonials, setTestimonials] = useState<TestimonialData[]>(fallbackTestimonials)
   const [current, setCurrent] = useState(0)
   const [autoplay, setAutoplay] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/testimonials')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setTestimonials(data)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (!autoplay) return
@@ -51,7 +73,7 @@ export default function Testimonials() {
       setCurrent((prev) => (prev + 1) % testimonials.length)
     }, 5000)
     return () => clearInterval(interval)
-  }, [autoplay])
+  }, [autoplay, testimonials.length])
 
   const next = () => {
     setAutoplay(false)
@@ -114,7 +136,7 @@ export default function Testimonials() {
               {/* Author */}
               <div>
                 <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 relative">
-                  <Image src={testimonials[current].image} alt={testimonials[current].name} fill className="object-cover" />
+                  <Image src={testimonials[current].image || '/placeholder.jpg'} alt={testimonials[current].name} fill className="object-cover" />
                 </div>
                 <h4 className="text-white font-semibold text-lg">
                   {testimonials[current].name}
