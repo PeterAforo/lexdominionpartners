@@ -3,6 +3,7 @@ import prisma from '@/lib/db'
 import { requireAdmin } from '@/lib/api-auth'
 import { createBookingSchema } from '@/lib/validations'
 import { isRateLimited, getClientIp } from '@/lib/rate-limit'
+import { sendBookingConfirmationToClient, sendBookingNotificationToCompany } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,6 +31,10 @@ export async function POST(req: NextRequest) {
         message: message || null,
       },
     })
+
+    // Send emails (fire-and-forget, don't block response)
+    sendBookingConfirmationToClient({ firstName, lastName, email, date, time }).catch(() => {})
+    sendBookingNotificationToCompany({ firstName, lastName, email, phone, date, time, message: message || undefined }).catch(() => {})
 
     return NextResponse.json({ success: true, id: booking.id })
   } catch (error) {

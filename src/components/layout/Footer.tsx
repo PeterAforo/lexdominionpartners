@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -14,7 +15,7 @@ const quickLinks = [
   { label: 'Book Consultation', href: '/booking' },
 ]
 
-const practiceAreas = [
+const defaultPracticeAreas = [
   { label: 'Corporate Law', href: '/services/corporate-law' },
   { label: 'Litigation', href: '/services/litigation' },
   { label: 'Real Estate', href: '/services/real-estate' },
@@ -24,6 +25,37 @@ const practiceAreas = [
 ]
 
 export default function Footer() {
+  const [settings, setSettings] = useState<Record<string, string>>({})
+  const [practiceAreas, setPracticeAreas] = useState(defaultPracticeAreas)
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => { if (data && !data.error) setSettings(data) })
+      .catch(() => {})
+
+    fetch('/api/services')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setPracticeAreas(data.slice(0, 6).map((s: any) => ({ label: s.title, href: `/services/${s.slug}` })))
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const phone = settings.phone || '0264511778'
+  const email = settings.email || 'info@lexdominion.com'
+  const address = settings.address || 'DVLA Adenta, directly opposite the Goil Filling Station @ Ritz Junction'
+  const hours = settings.officeHoursWeekday || 'Mon - Fri: 9:00 AM - 5:00 PM'
+  const hoursSat = settings.officeHoursSaturday || 'Weekends: Closed'
+
+  const socials = [
+    { key: 'facebook', url: settings.socialFacebook },
+    { key: 'twitter', url: settings.socialTwitter },
+    { key: 'linkedin', url: settings.socialLinkedin },
+    { key: 'instagram', url: settings.socialInstagram },
+  ].filter((s) => s.url)
   return (
     <footer className="bg-navy-800 text-white/80">
       {/* CTA Banner */}
@@ -65,15 +97,17 @@ export default function Footer() {
               integrity, and client success.
             </p>
             <div className="flex gap-4">
-              {['facebook', 'twitter', 'linkedin', 'instagram'].map((social) => (
+              {(socials.length > 0 ? socials : [{ key: 'facebook', url: '#' }, { key: 'twitter', url: '#' }, { key: 'linkedin', url: '#' }, { key: 'instagram', url: '#' }]).map((social) => (
                 <a
-                  key={social}
-                  href={`#${social}`}
+                  key={social.key}
+                  href={social.url || '#'}
+                  target={social.url && social.url !== '#' ? '_blank' : undefined}
+                  rel={social.url && social.url !== '#' ? 'noopener noreferrer' : undefined}
                   className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-gold-400 hover:border-gold-400 hover:text-navy-800 transition-all duration-300"
-                  aria-label={social}
+                  aria-label={social.key}
                 >
                   <span className="text-xs uppercase font-bold">
-                    {social[0]}
+                    {social.key[0]}
                   </span>
                 </a>
               ))}
@@ -134,36 +168,32 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="text-gold-400 mt-0.5 shrink-0" />
-                <span className="text-sm">
-                  DVLA Adenta, directly opposite
-                  <br />
-                  the Goil Filling Station @ Ritz Junction
-                </span>
+                <span className="text-sm">{address}</span>
               </li>
               <li>
                 <a
-                  href="tel:+233264511778"
+                  href={`tel:${phone.replace(/\s/g, '')}`}
                   className="flex items-center gap-3 text-sm hover:text-gold-400 transition-colors"
                 >
                   <Phone size={18} className="text-gold-400 shrink-0" />
-                  0264511778
+                  {phone}
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@lexdominion.com"
+                  href={`mailto:${email}`}
                   className="flex items-center gap-3 text-sm hover:text-gold-400 transition-colors"
                 >
                   <Mail size={18} className="text-gold-400 shrink-0" />
-                  info@lexdominion.com
+                  {email}
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <Clock size={18} className="text-gold-400 mt-0.5 shrink-0" />
                 <span className="text-sm">
-                  Mon - Fri: 9:00 AM - 5:00 PM
+                  {hours}
                   <br />
-                  Weekends: Closed
+                  {hoursSat}
                 </span>
               </li>
             </ul>

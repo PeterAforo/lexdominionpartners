@@ -1,19 +1,20 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { GSAPReveal, GSAPCounter } from '@/components/animations/GSAPWrapper'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 
-const highlights = [
+const defaultHighlights = [
   'Award-winning legal team with decades of experience',
   'Client-centered approach with personalized strategies',
   'Proven track record of successful case outcomes',
   'Transparent communication and competitive pricing',
 ]
 
-const stats = [
+const defaultStats = [
   { value: 25, suffix: '+', label: 'Years of Excellence' },
   { value: 500, suffix: '+', label: 'Cases Resolved' },
   { value: 50, suffix: '+', label: 'Expert Attorneys' },
@@ -21,6 +22,26 @@ const stats = [
 ]
 
 export default function AboutPreview() {
+  const [highlights, setHighlights] = useState(defaultHighlights)
+  const [stats] = useState(defaultStats)
+  const [aboutImage, setAboutImage] = useState('https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80')
+  const [aboutText, setAboutText] = useState('Founded on the principles of integrity, excellence, and client advocacy, Lex Dominion Partners has grown into one of the most respected law firms in the region. Our multidisciplinary team brings together diverse expertise to deliver comprehensive legal solutions.')
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && !data.error) {
+          if (data.page_about_highlights) {
+            const items = data.page_about_highlights.split(',').map((s: string) => s.trim()).filter(Boolean)
+            if (items.length > 0) setHighlights(items)
+          }
+          if (data.page_about_image) setAboutImage(data.page_about_image)
+          if (data.aboutDescription) setAboutText(data.aboutDescription)
+        }
+      })
+      .catch(() => {})
+  }, [])
   return (
     <section className="section-padding bg-white">
       <div className="container-custom">
@@ -30,7 +51,7 @@ export default function AboutPreview() {
             <div className="relative">
               <div className="aspect-[4/3] bg-navy-800 rounded-sm overflow-hidden relative">
                 <Image
-                  src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80"
+                  src={aboutImage}
                   alt="Professional legal team in discussion"
                   fill
                   className="object-cover"
@@ -61,11 +82,7 @@ export default function AboutPreview() {
                 A Legacy of Legal Excellence & Leadership
               </h2>
               <p className="text-gray-600 leading-relaxed mb-8">
-                Founded on the principles of integrity, excellence, and client
-                advocacy, Lex Dominion Partners has grown into one of the most
-                respected law firms in the region. Our multidisciplinary team
-                brings together diverse expertise to deliver comprehensive legal
-                solutions.
+                {aboutText}
               </p>
 
               {/* Highlights */}

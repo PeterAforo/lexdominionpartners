@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react'
 import { Users, Plus, Edit2, Trash2, Save, X, ToggleLeft, ToggleRight } from 'lucide-react'
 import toast from 'react-hot-toast'
+import ImageUpload from '@/components/admin/ImageUpload'
 
-const emptyForm = { name: '', slug: '', title: '', email: '', phone: '', bio: '', education: '', barAdmissions: '', languages: '', order: 0 }
+const emptyForm = { name: '', slug: '', title: '', email: '', phone: '', bio: '', education: '', barAdmissions: '', languages: '', image: '', order: 0 }
 
 export default function AdminTeamPage() {
   const [members, setMembers] = useState<any[]>([])
@@ -28,7 +29,7 @@ export default function AdminTeamPage() {
 
   const startEdit = (m: any) => {
     setEditingId(m.id)
-    setForm({ name: m.name, slug: m.slug, title: m.title, email: m.email || '', phone: m.phone || '', bio: m.bio || '', education: m.education || '', barAdmissions: m.barAdmissions || '', languages: m.languages || '', order: m.order })
+    setForm({ name: m.name, slug: m.slug, title: m.title, email: m.email || '', phone: m.phone || '', bio: m.bio || '', education: m.education || '', barAdmissions: m.barAdmissions || '', languages: m.languages || '', image: m.image || '', order: m.order })
     setShowForm(true)
   }
 
@@ -110,6 +111,9 @@ export default function AdminTeamPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Bar Admissions</label>
               <input type="text" value={form.barAdmissions} onChange={(e) => setForm({ ...form, barAdmissions: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400" placeholder="e.g. New York, California" />
             </div>
+          </div>
+          <div className="mb-4">
+            <ImageUpload value={form.image} onChange={(url) => setForm({ ...form, image: url })} label="Photo" />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Languages</label>

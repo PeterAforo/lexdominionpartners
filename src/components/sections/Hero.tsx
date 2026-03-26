@@ -1,11 +1,27 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import gsap from 'gsap'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { ArrowRight, Scale, Shield } from 'lucide-react'
+
+const defaultSlide = {
+  title: 'Where Law Meets',
+  subtitle: 'Leadership',
+  description: 'At Lex Dominion Partners, we combine legal mastery with strategic leadership to deliver exceptional outcomes. Our team of seasoned attorneys is committed to protecting your interests and securing your future.',
+  buttonText: 'Schedule Consultation',
+  buttonLink: '/booking',
+  image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1920&q=80',
+}
+
+const defaultStats = [
+  { value: '25+', label: 'Years Experience' },
+  { value: '500+', label: 'Cases Won' },
+  { value: '98%', label: 'Success Rate' },
+  { value: '50+', label: 'Expert Attorneys' },
+]
 
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null)
@@ -13,6 +29,43 @@ export default function Hero() {
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
+  const [slide, setSlide] = useState(defaultSlide)
+  const [stats, setStats] = useState(defaultStats)
+
+  useEffect(() => {
+    fetch('/api/hero-slides')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const s = data[0]
+          setSlide({
+            title: s.title || defaultSlide.title,
+            subtitle: s.subtitle || defaultSlide.subtitle,
+            description: s.description || defaultSlide.description,
+            buttonText: s.buttonText || defaultSlide.buttonText,
+            buttonLink: s.buttonLink || defaultSlide.buttonLink,
+            image: s.image || defaultSlide.image,
+          })
+        }
+      })
+      .catch(() => {})
+
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && !data.error) {
+          if (data.stat1Value) {
+            setStats([
+              { value: data.stat1Value || '25+', label: data.stat1Label || 'Years Experience' },
+              { value: data.stat2Value || '500+', label: data.stat2Label || 'Cases Won' },
+              { value: data.stat3Value || '98%', label: data.stat3Label || 'Success Rate' },
+              { value: data.stat4Value || '50+', label: data.stat4Label || 'Expert Attorneys' },
+            ])
+          }
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -54,7 +107,7 @@ export default function Hero() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1920&q=80"
+          src={slide.image}
           alt="Professional law office"
           fill
           sizes="100vw"
@@ -99,8 +152,8 @@ export default function Hero() {
             ref={titleRef}
             className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-white leading-tight mb-6 opacity-0"
           >
-            Where Law Meets
-            <span className="block gold-text mt-2">Leadership</span>
+            {slide.title}
+            <span className="block gold-text mt-2">{slide.subtitle}</span>
           </h1>
 
           {/* Subtitle */}
@@ -108,16 +161,13 @@ export default function Hero() {
             ref={subtitleRef}
             className="text-lg md:text-xl text-white/70 max-w-2xl mb-10 leading-relaxed opacity-0"
           >
-            At Lex Dominion Partners, we combine legal mastery with strategic
-            leadership to deliver exceptional outcomes. Our team of seasoned
-            attorneys is committed to protecting your interests and securing
-            your future.
+            {slide.description}
           </p>
 
           {/* CTAs */}
           <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4 opacity-0">
-            <Link href="/booking" className="btn-primary text-base group">
-              Schedule Consultation
+            <Link href={slide.buttonLink} className="btn-primary text-base group">
+              {slide.buttonText}
               <ArrowRight
                 size={18}
                 className="ml-2 group-hover:translate-x-1 transition-transform"
@@ -135,12 +185,7 @@ export default function Hero() {
             transition={{ delay: 1.8, duration: 0.8 }}
             className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 pt-10 border-t border-white/10"
           >
-            {[
-              { value: '25+', label: 'Years Experience' },
-              { value: '500+', label: 'Cases Won' },
-              { value: '98%', label: 'Success Rate' },
-              { value: '50+', label: 'Expert Attorneys' },
-            ].map((stat, i) => (
+            {stats.map((stat, i) => (
               <div key={i} className="text-center md:text-left">
                 <div className="text-3xl md:text-4xl font-heading font-bold text-gold-400">
                   {stat.value}

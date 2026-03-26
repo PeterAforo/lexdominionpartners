@@ -4,17 +4,20 @@ import { useSession } from 'next-auth/react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { LayoutDashboard, FileText, Users, MessageSquare, Calendar, Mail, Settings, LogOut, Menu, X, Scale, BookOpen } from 'lucide-react'
+import { LayoutDashboard, FileText, Users, MessageSquare, Calendar, Mail, Settings, LogOut, Menu, X, Scale, BookOpen, Image, FileEdit, UserCog } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
 const sidebarItems = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { label: 'Hero Slides', href: '/admin/hero-slides', icon: Image },
   { label: 'Services', href: '/admin/services', icon: FileText },
   { label: 'Team', href: '/admin/team', icon: Users },
   { label: 'Blog', href: '/admin/blog', icon: BookOpen },
   { label: 'Testimonials', href: '/admin/testimonials', icon: MessageSquare },
+  { label: 'Pages', href: '/admin/pages', icon: FileEdit },
   { label: 'Bookings', href: '/admin/bookings', icon: Calendar },
   { label: 'Messages', href: '/admin/messages', icon: Mail },
+  { label: 'Users', href: '/admin/users', icon: UserCog },
   { label: 'Settings', href: '/admin/settings', icon: Settings },
 ]
 

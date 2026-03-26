@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react'
 import { FileText, Plus, Edit2, Trash2, Save, X, ToggleLeft, ToggleRight } from 'lucide-react'
 import toast from 'react-hot-toast'
+import ImageUpload from '@/components/admin/ImageUpload'
 
-const emptyForm = { title: '', slug: '', description: '', content: '', icon: '', order: 0 }
+const emptyForm = { title: '', slug: '', description: '', content: '', icon: '', image: '', order: 0 }
 
 export default function AdminServicesPage() {
   const [services, setServices] = useState<any[]>([])
@@ -28,7 +29,7 @@ export default function AdminServicesPage() {
 
   const startEdit = (service: any) => {
     setEditingId(service.id)
-    setForm({ title: service.title, slug: service.slug, description: service.description, content: service.content || '', icon: service.icon || '', order: service.order })
+    setForm({ title: service.title, slug: service.slug, description: service.description, content: service.content || '', icon: service.icon || '', image: service.image || '', order: service.order })
     setShowForm(true)
   }
 
@@ -98,6 +99,9 @@ export default function AdminServicesPage() {
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400" placeholder="Brief description" />
+          </div>
+          <div className="mb-4">
+            <ImageUpload value={form.image} onChange={(url) => setForm({ ...form, image: url })} label="Service Image" />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Content (detailed page content)</label>

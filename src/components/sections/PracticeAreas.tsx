@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { StaggerContainer, StaggerItem, HoverScale } from '@/components/animations/MotionWrapper'
@@ -14,60 +15,38 @@ import {
   Globe,
   Calculator,
   ArrowRight,
+  LucideIcon,
+  Briefcase,
 } from 'lucide-react'
 
-const practiceAreas = [
-  {
-    title: 'Corporate Law',
-    slug: 'corporate-law',
-    description: 'Strategic counsel for businesses from formation through complex transactions and governance.',
-    icon: Building2,
-  },
-  {
-    title: 'Litigation',
-    slug: 'litigation',
-    description: 'Aggressive representation in civil and commercial disputes at all court levels.',
-    icon: Gavel,
-  },
-  {
-    title: 'Real Estate',
-    slug: 'real-estate',
-    description: 'Comprehensive legal support for property transactions, development, and disputes.',
-    icon: Home,
-  },
-  {
-    title: 'Family Law',
-    slug: 'family-law',
-    description: 'Compassionate guidance through divorce, custody, and family legal matters.',
-    icon: Users,
-  },
-  {
-    title: 'Criminal Defense',
-    slug: 'criminal-defense',
-    description: 'Vigorous defense protecting your rights and freedom in criminal proceedings.',
-    icon: ShieldAlert,
-  },
-  {
-    title: 'Intellectual Property',
-    slug: 'intellectual-property',
-    description: 'Protection and enforcement of patents, trademarks, copyrights, and trade secrets.',
-    icon: Lightbulb,
-  },
-  {
-    title: 'Immigration',
-    slug: 'immigration',
-    description: 'Expert guidance through visa applications, green cards, and citizenship processes.',
-    icon: Globe,
-  },
-  {
-    title: 'Tax Law',
-    slug: 'tax-law',
-    description: 'Strategic tax planning, compliance, and dispute resolution for individuals and businesses.',
-    icon: Calculator,
-  },
+const iconMap: Record<string, LucideIcon> = {
+  Building2, Gavel, Home, Users, ShieldAlert, Lightbulb, Globe, Calculator, Briefcase,
+}
+
+const fallbackAreas = [
+  { title: 'Corporate Law', slug: 'corporate-law', description: 'Strategic counsel for businesses from formation through complex transactions and governance.', icon: 'Building2' },
+  { title: 'Litigation', slug: 'litigation', description: 'Aggressive representation in civil and commercial disputes at all court levels.', icon: 'Gavel' },
+  { title: 'Real Estate', slug: 'real-estate', description: 'Comprehensive legal support for property transactions, development, and disputes.', icon: 'Home' },
+  { title: 'Family Law', slug: 'family-law', description: 'Compassionate guidance through divorce, custody, and family legal matters.', icon: 'Users' },
+  { title: 'Criminal Defense', slug: 'criminal-defense', description: 'Vigorous defense protecting your rights and freedom in criminal proceedings.', icon: 'ShieldAlert' },
+  { title: 'Intellectual Property', slug: 'intellectual-property', description: 'Protection and enforcement of patents, trademarks, copyrights, and trade secrets.', icon: 'Lightbulb' },
+  { title: 'Immigration', slug: 'immigration', description: 'Expert guidance through visa applications, green cards, and citizenship processes.', icon: 'Globe' },
+  { title: 'Tax Law', slug: 'tax-law', description: 'Strategic tax planning, compliance, and dispute resolution for individuals and businesses.', icon: 'Calculator' },
 ]
 
 export default function PracticeAreas() {
+  const [practiceAreas, setPracticeAreas] = useState(fallbackAreas)
+
+  useEffect(() => {
+    fetch('/api/services')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setPracticeAreas(data)
+        }
+      })
+      .catch(() => {})
+  }, [])
   return (
     <section className="section-padding bg-gray-50">
       <div className="container-custom">
@@ -108,10 +87,10 @@ export default function PracticeAreas() {
                   className="group block bg-white p-8 rounded-sm border border-gray-100 card-hover h-full"
                 >
                   <div className="w-14 h-14 rounded-sm bg-gold-50 flex items-center justify-center mb-6 group-hover:bg-gold-400 transition-colors duration-300">
-                    <area.icon
-                      size={28}
-                      className="text-gold-500 group-hover:text-navy-800 transition-colors duration-300"
-                    />
+                    {(() => {
+                      const IconComp = iconMap[area.icon] || Briefcase
+                      return <IconComp size={28} className="text-gold-500 group-hover:text-navy-800 transition-colors duration-300" />
+                    })()}
                   </div>
                   <h3 className="text-xl font-heading font-semibold text-navy-800 mb-3">
                     {area.title}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
+import { sendBookingConfirmationToClient, sendBookingNotificationToCompany } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,6 +42,10 @@ export async function POST(req: NextRequest) {
         message: message ? `[Booked via Lex AI Chatbot] ${service ? `Service: ${service}. ` : ''}${message}` : `[Booked via Lex AI Chatbot]${service ? ` Service: ${service}` : ''}`,
       },
     })
+
+    // Send emails (fire-and-forget)
+    sendBookingConfirmationToClient({ firstName, lastName, email, date, time, serviceName: service }).catch(() => {})
+    sendBookingNotificationToCompany({ firstName, lastName, email, phone, date, time, serviceName: service }).catch(() => {})
 
     return NextResponse.json({
       success: true,

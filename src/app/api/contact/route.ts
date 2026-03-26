@@ -3,6 +3,7 @@ import prisma from '@/lib/db'
 import { requireAdmin } from '@/lib/api-auth'
 import { createContactSchema } from '@/lib/validations'
 import { isRateLimited, getClientIp } from '@/lib/rate-limit'
+import { sendContactNotificationToCompany } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,6 +23,9 @@ export async function POST(req: NextRequest) {
     const contactMessage = await prisma.contactMessage.create({
       data: { name, email, phone: phone || null, subject, message },
     })
+
+    // Send email notification to company (fire-and-forget)
+    sendContactNotificationToCompany({ name, email, phone: phone || undefined, subject, message }).catch(() => {})
 
     return NextResponse.json({ success: true, id: contactMessage.id })
   } catch (error) {

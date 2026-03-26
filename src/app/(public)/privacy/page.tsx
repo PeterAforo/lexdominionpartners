@@ -1,9 +1,21 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { GSAPTextReveal } from '@/components/animations/GSAPWrapper'
 
 export default function PrivacyPolicyPage() {
+  const [customContent, setCustomContent] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.page_privacy) setCustomContent(data.page_privacy)
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <>
       <section className="relative py-24 bg-navy-800 overflow-hidden">
@@ -21,6 +33,9 @@ export default function PrivacyPolicyPage() {
 
       <section className="section-padding bg-white">
         <div className="container-custom max-w-4xl mx-auto">
+          {customContent ? (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="prose prose-lg max-w-none prose-headings:font-heading prose-headings:text-navy-800 prose-p:text-gray-600 prose-li:text-gray-600 prose-strong:text-navy-800" dangerouslySetInnerHTML={{ __html: customContent }} />
+          ) : (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="prose prose-lg max-w-none prose-headings:font-heading prose-headings:text-navy-800 prose-p:text-gray-600 prose-li:text-gray-600 prose-strong:text-navy-800">
             <h2>1. Introduction</h2>
             <p>
@@ -102,6 +117,7 @@ export default function PrivacyPolicyPage() {
               <li><strong>Address:</strong> DVLA Adenta, directly opposite the Goil Filling Station @ Ritz Junction</li>
             </ul>
           </motion.div>
+          )}
         </div>
       </section>
     </>

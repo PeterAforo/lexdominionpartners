@@ -18,6 +18,15 @@ const defaultSettings: Record<string, string> = {
   socialLinkedin: '',
   socialInstagram: '',
   metaDescription: 'Premier law firm delivering exceptional legal services with a commitment to leadership, integrity, and client success.',
+  aboutDescription: 'Founded on the principles of integrity, excellence, and client advocacy, Lex Dominion Partners has grown into one of the most respected law firms in the region. Our multidisciplinary team brings together diverse expertise to deliver comprehensive legal solutions.',
+  stat1Value: '25+',
+  stat1Label: 'Years Experience',
+  stat2Value: '500+',
+  stat2Label: 'Cases Won',
+  stat3Value: '98%',
+  stat3Label: 'Success Rate',
+  stat4Value: '50+',
+  stat4Label: 'Expert Attorneys',
 }
 
 export default function AdminSettingsPage() {
@@ -119,6 +128,32 @@ export default function AdminSettingsPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Sunday</label>
               <input type="text" value={settings.officeHoursSunday} onChange={(e) => update('officeHoursSunday', e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400" />
+            </div>
+          </div>
+        </div>
+
+        {/* About & Stats */}
+        <div className="bg-white rounded-sm border border-gray-100 p-6">
+          <h2 className="font-heading font-semibold text-navy-800 mb-4">Homepage Content</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">About Description (homepage)</label>
+              <textarea value={settings.aboutDescription} onChange={(e) => update('aboutDescription', e.target.value)} rows={3} className="w-full px-4 py-2.5 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400" />
+            </div>
+            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Statistics (shown in Hero & About sections)</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="space-y-2">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Stat {n} Value</label>
+                    <input type="text" value={settings[`stat${n}Value`] || ''} onChange={(e) => update(`stat${n}Value`, e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400 text-sm" placeholder="e.g. 25+" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Stat {n} Label</label>
+                    <input type="text" value={settings[`stat${n}Label`] || ''} onChange={(e) => update(`stat${n}Label`, e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-sm focus:outline-none focus:border-gold-400 text-sm" placeholder="e.g. Years Experience" />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

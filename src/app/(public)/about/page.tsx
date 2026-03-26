@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { GSAPReveal, GSAPTextReveal, GSAPCounter } from '@/components/animations/GSAPWrapper'
@@ -23,6 +24,38 @@ const timeline = [
 ]
 
 export default function AboutPage() {
+  const [customContent, setCustomContent] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.page_about) setCustomContent(data.page_about)
+      })
+      .catch(() => {})
+  }, [])
+
+  if (customContent) {
+    return (
+      <>
+        <section className="relative py-24 bg-navy-800 overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{ backgroundImage: `radial-gradient(circle at 50% 50%, rgba(197, 165, 78, 0.3) 0%, transparent 50%)` }} />
+          </div>
+          <div className="container-custom relative z-10 text-center">
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-gold-400 font-medium tracking-wider uppercase text-sm mb-4">About Our Firm</motion.p>
+            <GSAPTextReveal text="A Legacy of Legal Excellence" tag="h1" className="text-4xl md:text-6xl font-bold text-white mb-6" />
+          </div>
+        </section>
+        <section className="section-padding bg-white">
+          <div className="container-custom max-w-4xl mx-auto">
+            <div className="prose prose-lg max-w-none prose-headings:font-heading prose-headings:text-navy-800 prose-p:text-gray-600" dangerouslySetInnerHTML={{ __html: customContent }} />
+          </div>
+        </section>
+      </>
+    )
+  }
+
   return (
     <>
       {/* Hero */}
