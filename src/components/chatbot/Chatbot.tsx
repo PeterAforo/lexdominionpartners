@@ -25,12 +25,65 @@ export default function Chatbot() {
     openChat,
     closeChat,
     toggleMinimize,
+    showProactivePopup,
+    dismissPopup,
   } = useChatbot()
 
-  const lastAssistantMsg = [...messages].reverse().find((m) => m.role === 'assistant')
+  const handleOpenFromPopup = () => {
+    dismissPopup()
+    openChat()
+  }
 
   return (
     <>
+      {/* Proactive popup bubble */}
+      <AnimatePresence>
+        {showProactivePopup && !isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="fixed bottom-[100px] right-6 z-50 max-w-[280px]"
+          >
+            <div className="bg-white rounded-xl shadow-2xl border border-gray-200 p-4 relative">
+              {/* Close button */}
+              <button
+                onClick={dismissPopup}
+                className="absolute top-2 right-2 w-5 h-5 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                aria-label="Dismiss"
+              >
+                <X size={12} className="text-gray-500" />
+              </button>
+
+              {/* Avatar + message */}
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 bg-navy-800 rounded-full flex items-center justify-center shrink-0">
+                  <Scale size={16} className="text-gold-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-navy-800">Lex</p>
+                  <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">
+                    Hi there! Need help with a legal matter? I can assist with consultations, practice areas, and more.
+                  </p>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <button
+                onClick={handleOpenFromPopup}
+                className="mt-3 w-full py-2 bg-gold-400 text-navy-800 text-xs font-semibold rounded-lg hover:bg-gold-500 transition-colors"
+              >
+                Chat with Lex
+              </button>
+
+              {/* Arrow pointing to launcher */}
+              <div className="absolute -bottom-2 right-8 w-4 h-4 bg-white border-r border-b border-gray-200 rotate-45" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Floating Launch Button */}
       <AnimatePresence>
         {!isOpen && (
@@ -44,7 +97,7 @@ export default function Chatbot() {
               exit={{ scale: 0, opacity: 0 }}
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
-              onClick={openChat}
+              onClick={handleOpenFromPopup}
               className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gold-400 text-navy-800 rounded-full shadow-2xl flex items-center justify-center hover:bg-gold-500 transition-colors group"
               aria-label="Open Lex AI Assistant"
             >

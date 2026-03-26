@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { CHATBOT_CONFIG } from '@/lib/chatbot-config'
+import { playNotificationSound } from '@/lib/notification-sound'
 
 export interface ChatMessage {
   id: string
@@ -52,6 +53,8 @@ export function useChatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const [unreadCount, setUnreadCount] = useState(1)
+  const [showProactivePopup, setShowProactivePopup] = useState(false)
+  const hasAutoPrompted = useRef(false)
 
   // Lead capture state
   const [leadCaptureMode, setLeadCaptureMode] = useState(false)
@@ -82,9 +85,30 @@ export function useChatbot() {
   useEffect(() => {
     if (isOpen && !isMinimized) {
       setUnreadCount(0)
+      setShowProactivePopup(false)
       setTimeout(() => inputRef.current?.focus(), 300)
     }
   }, [isOpen, isMinimized])
+
+  // Auto-popup after 5 seconds of inactivity (once per session)
+  useEffect(() => {
+    const alreadyPrompted = typeof window !== 'undefined' && sessionStorage.getItem('lex_auto_prompted')
+    if (alreadyPrompted || hasAutoPrompted.current) return
+
+    const timer = setTimeout(() => {
+      if (!isOpen && !hasAutoPrompted.current) {
+        hasAutoPrompted.current = true
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('lex_auto_prompted', 'true')
+        }
+        setShowProactivePopup(true)
+        setUnreadCount(1)
+        playNotificationSound()
+      }
+    }, 5000)
+
+    return () => clearTimeout(timer)
+  }, [isOpen])
 
   const addMessage = useCallback((msg: Omit<ChatMessage, 'id' | 'timestamp'>) => {
     const newMsg: ChatMessage = {
@@ -648,5 +672,7 @@ export function useChatbot() {
     toggleMinimize,
     leadCaptureMode,
     bookingMode,
+    showProactivePopup,
+    dismissPopup: () => setShowProactivePopup(false),
   }
 }

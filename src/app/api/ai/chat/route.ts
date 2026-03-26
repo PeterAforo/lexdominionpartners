@@ -18,13 +18,44 @@ function isRateLimited(ip: string): boolean {
   return entry.count > RATE_LIMIT
 }
 
-// Build the system prompt dynamically from config and knowledge base
-function buildSystemPrompt(): string {
+// Cache for dynamic knowledge (refreshes every 5 minutes)
+let dynamicKnowledgeCache: { content: string; fetchedAt: number } | null = null
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
+async function fetchDynamicKnowledge(): Promise<string> {
+  const now = Date.now()
+  if (dynamicKnowledgeCache && now - dynamicKnowledgeCache.fetchedAt < CACHE_TTL) {
+    return dynamicKnowledgeCache.content
+  }
+
+  try {
+    // Use internal fetch to the sync-knowledge endpoint
+    const baseUrl = process.env.NEXTAUTH_URL
+      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+
+    const res = await fetch(`${baseUrl}/api/ai/sync-knowledge`, { cache: 'no-store' })
+    if (res.ok) {
+      const data = await res.json()
+      dynamicKnowledgeCache = { content: data.dynamicKnowledge || '', fetchedAt: now }
+      return dynamicKnowledgeCache.content
+    }
+  } catch (err) {
+    console.error('Failed to fetch dynamic knowledge:', err)
+  }
+
+  return dynamicKnowledgeCache?.content || ''
+}
+
+// Build the system prompt dynamically from config, knowledge base, and live DB content
+async function buildSystemPrompt(): Promise<string> {
   const { name, personality, contact, capabilities } = CHATBOT_CONFIG
 
   const knowledgeSummary = KNOWLEDGE_BASE.map(
     (k) => `Q: ${k.question}\nA: ${k.answer}`
   ).join('\n\n')
+
+  // Fetch live content from database
+  const dynamicKnowledge = await fetchDynamicKnowledge()
 
   return `You are ${name}, the AI legal assistant for Lex Dominion Partners, a premier law firm. Tagline: "Law & Leadership".
 
@@ -71,13 +102,15 @@ CONVERSATION FLOWS:
 
 KNOWLEDGE BASE:
 ${knowledgeSummary}
+${dynamicKnowledge ? `\nLIVE WEBSITE DATA (updated automatically from database — always prefer this over static knowledge if there is a conflict):\n${dynamicKnowledge}` : ''}
 
 IMPORTANT:
 - Always stay on-topic about legal services and Lex Dominion Partners
 - If you don't know something, offer to connect the user with an attorney
 - ALWAYS respond with valid JSON only — no extra text before or after
 - When mentioning pages, use markdown links like [booking page](/booking)
-- Keep responses concise (2-4 sentences for simple queries, more for detailed explanations)`
+- Keep responses concise (2-4 sentences for simple queries, more for detailed explanations)
+- If live website data is available, use it as the source of truth for services, team members, blog posts, and testimonials`
 }
 
 // Detect conversation intent for fallback routing
@@ -205,7 +238,7 @@ export async function POST(req: NextRequest) {
     // Try OpenAI if API key is configured
     if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here') {
       try {
-        const systemPrompt = buildSystemPrompt()
+        const systemPrompt = await buildSystemPrompt()
 
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
