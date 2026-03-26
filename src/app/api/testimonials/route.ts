@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url)
+    const all = searchParams.get('all') === 'true'
+
     const testimonials = await prisma.testimonial.findMany({
-      where: { isActive: true },
+      where: all ? {} : { isActive: true },
       orderBy: { order: 'asc' },
     })
     return NextResponse.json(testimonials)

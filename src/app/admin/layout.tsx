@@ -4,13 +4,14 @@ import { useSession } from 'next-auth/react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { LayoutDashboard, FileText, Users, MessageSquare, Calendar, Mail, Settings, LogOut, Menu, X, Scale } from 'lucide-react'
+import { LayoutDashboard, FileText, Users, MessageSquare, Calendar, Mail, Settings, LogOut, Menu, X, Scale, BookOpen } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
 const sidebarItems = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Services', href: '/admin/services', icon: FileText },
   { label: 'Team', href: '/admin/team', icon: Users },
+  { label: 'Blog', href: '/admin/blog', icon: BookOpen },
   { label: 'Testimonials', href: '/admin/testimonials', icon: MessageSquare },
   { label: 'Bookings', href: '/admin/bookings', icon: Calendar },
   { label: 'Messages', href: '/admin/messages', icon: Mail },
